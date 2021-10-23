@@ -44,8 +44,8 @@ async fn run_script(
 
     info!("Running script...");
 
-    let result = script.invoke_async(&mut con).await?;
-    info!("{:?}", result);
+    let result: redis::Value = script.invoke_async(&mut con).await?;
+    info!("Results:\n{:?}", result);
 
     Ok(())
 }
