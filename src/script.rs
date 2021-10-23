@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use tracing::debug;
 
 #[derive(Debug, Deserialize)]
 pub struct Script {
@@ -8,15 +9,28 @@ pub struct Script {
 }
 
 impl Script {
-    pub fn keys(&self) -> &Vec<String> {
-        &self.keys
-    }
+    pub async fn invoke_async<T>(
+        &self,
+        con: &mut impl redis::aio::ConnectionLike,
+    ) -> redis::RedisResult<T>
+    where
+        T: redis::FromRedisValue,
+    {
+        debug!("Invoking script:\n{}", self.script);
+        let script = redis::Script::new(&self.script);
 
-    pub fn args(&self) -> &Vec<String> {
-        &self.args
-    }
+        let mut invocation = script.prepare_invoke();
 
-    pub fn script(&self) -> &String {
-        &self.script
+        for key in self.keys.iter() {
+            debug!("Adding key: {}", key);
+            invocation.key(key);
+        }
+
+        for arg in self.args.iter() {
+            debug!("Adding arg: {}", arg);
+            invocation.arg(arg);
+        }
+
+        invocation.invoke_async(con).await
     }
 }

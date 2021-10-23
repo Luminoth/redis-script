@@ -1,5 +1,8 @@
 {
     "keys": [],
-    "args": [],
-    "script": ""
+    "args": [
+        "1",
+        "2"
+    ],
+    "script": "return tonumber(ARGV[1]) + tonumber(ARGV[2]);"
 }
