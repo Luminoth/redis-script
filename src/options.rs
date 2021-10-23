@@ -15,7 +15,7 @@ pub struct Options {
 
     /// script to run
     #[argh(positional)]
-    pub script: PathBuf,
+    pub scripts: Vec<PathBuf>,
 }
 
 impl Options {

@@ -1,0 +1,5 @@
+{
+    "keys": [],
+    "args": [],
+    "script": "return {1,2,{3,'Hello World!'}};"
+}

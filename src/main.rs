@@ -11,7 +11,7 @@ use tracing_subscriber::FmtSubscriber;
 
 fn init_logging() -> anyhow::Result<()> {
     let subscriber = FmtSubscriber::builder()
-        .with_max_level(Level::DEBUG)
+        .with_max_level(Level::INFO)
         .finish();
 
     tracing::subscriber::set_global_default(subscriber)?;
@@ -56,8 +56,10 @@ async fn main() -> anyhow::Result<()> {
 
     let options: options::Options = argh::from_env();
 
-    let script = load_script(&options.script).await?;
-    run_script(options.connection_info(), script).await?;
+    for path in options.scripts.iter() {
+        let script = load_script(path).await?;
+        run_script(options.connection_info(), script).await?;
+    }
 
     Ok(())
 }
