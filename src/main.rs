@@ -34,17 +34,12 @@ async fn load_script(path: impl Into<PathBuf>) -> anyhow::Result<script::Script>
 }
 
 async fn run_script(
-    connection_info: impl AsRef<str>,
+    con: &mut impl redis::aio::ConnectionLike,
     script: script::Script,
 ) -> anyhow::Result<()> {
-    info!("Connecting redis: {}", connection_info.as_ref());
-
-    let client = redis::Client::open(connection_info.as_ref())?;
-    let mut con = client.get_async_connection().await?;
-
     info!("Running script...");
 
-    let result: redis::Value = script.invoke_async(&mut con).await?;
+    let result: redis::Value = script.invoke_async(con).await?;
     info!("Results:\n{:?}", result);
 
     Ok(())
@@ -56,9 +51,16 @@ async fn main() -> anyhow::Result<()> {
 
     let options: options::Options = argh::from_env();
 
+    let connection_info = options.connection_info();
+
+    info!("Connecting redis: {}", connection_info);
+
+    let client = redis::Client::open(connection_info)?;
+    let mut con = client.get_async_connection().await?;
+
     for path in options.scripts.iter() {
         let script = load_script(path).await?;
-        run_script(options.connection_info(), script).await?;
+        run_script(&mut con, script).await?;
     }
 
     Ok(())
