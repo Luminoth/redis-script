@@ -1,8 +1,6 @@
 use std::path::PathBuf;
-use std::sync::Arc;
 
 use argh::FromArgs;
-use parking_lot::RwLock;
 
 /// Website API
 #[derive(FromArgs, Debug)]
@@ -16,8 +14,6 @@ pub struct Options {
     pub port: u16,
 
     /// script to run
-    #[argh(option)]
+    #[argh(positional)]
     script: PathBuf,
 }
-
-pub type SharedOptions = Arc<RwLock<Options>>;
