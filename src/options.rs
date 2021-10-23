@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use argh::FromArgs;
 
-/// Website API
+/// Redis script runner
 #[derive(FromArgs, Debug)]
 pub struct Options {
     /// redis host
@@ -15,5 +15,5 @@ pub struct Options {
 
     /// script to run
     #[argh(positional)]
-    script: PathBuf,
+    pub script: PathBuf,
 }

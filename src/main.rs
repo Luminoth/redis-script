@@ -1,8 +1,12 @@
 //#![deny(warnings)]
 
 mod options;
+mod script;
 
-use tracing::{info, Level};
+use std::fs::File;
+use std::path::Path;
+
+use tracing::Level;
 use tracing_subscriber::FmtSubscriber;
 
 fn init_logging() -> anyhow::Result<()> {
@@ -15,13 +19,25 @@ fn init_logging() -> anyhow::Result<()> {
     Ok(())
 }
 
+fn load_script(path: impl AsRef<Path>) -> anyhow::Result<script::Script> {
+    let file = File::open(path)?;
+    let script = serde_json::from_reader(file)?;
+
+    Ok(script)
+}
+
+fn run_script(script: script::Script) -> anyhow::Result<()> {
+    Ok(())
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     init_logging()?;
 
-    let _options: options::Options = argh::from_env();
+    let options: options::Options = argh::from_env();
 
-    info!("Hello, world!");
+    let script = load_script(&options.script)?;
+    run_script(script)?;
 
     Ok(())
 }
