@@ -1,0 +1,9 @@
+{
+    "keys": [
+        "test.one",
+        "test.two",
+        "test.three"
+    ],
+    "args": [],
+    "script": "local a = {}\nfor i,v in ipairs(KEYS) do\na[i] = v\nend\nreturn a"
+}
